@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ProductList.css';
 import CartItem from './CartItem';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
 
 function ProductList({ onHomeClick }) {
@@ -10,6 +10,13 @@ function ProductList({ onHomeClick }) {
     const [addedToCart, setAddedToCart] = useState({});
 
     const dispatch = useDispatch();
+    const CartItems = useSelector((state) => state.cart.items);
+
+    const calculateTotalQuantity = () => {
+        return CartItems
+            ? CartItems.reduce((total, item) => total + item.quantity, 0)
+            : 0;
+    };
 
     const plantsArray = [
         {
@@ -319,6 +326,9 @@ function ProductList({ onHomeClick }) {
                                         id="mainIconPathAttribute"
                                     ></path>
                                 </svg>
+                                <span className="cart-quantity">
+                                    {calculateTotalQuantity()}
+                                </span>
                             </h1>
                         </a>
                     </div>
@@ -350,8 +360,12 @@ function ProductList({ onHomeClick }) {
                                             className="product-button"
                                             onClick={() => handleAddToCart(plant)}
                                             disabled={addedToCart[plant.name]}
+                                            style={{
+                                                backgroundColor: addedToCart[plant.name] ? 'gray' : '',
+                                                cursor: addedToCart[plant.name] ? 'not-allowed' : 'pointer',
+                                            }}
                                         >
-                                            {addedToCart[plant.name] ? 'Added' : 'Add to Cart'}
+                                            {addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'}
                                         </button>
                                     </div>
                                 ))}
